@@ -4,6 +4,7 @@ const htmlRoutes = require('./Routes/htmlQuestion');
 const jsRoutes = require('./Routes/jsQuestion');
 const cssRoutes = require('./Routes/cssQuestion');
 const cppRoutes = require('./Routes/cppQuestion');
+const createQuiz = require('./Routes/createQuiz');
 require('dotenv').config();
 
 const app = express();
@@ -25,6 +26,7 @@ app.use(htmlRoutes);
 app.use(jsRoutes);
 app.use(cssRoutes);
 app.use(cppRoutes);
+app.use(createQuiz);
 
 // MongoDB connection
 mongoose.connect(DB)

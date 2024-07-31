@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form Input</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Create New Quiz</h1>
+        <form id="quizForm">
+            <label for="title">Title:</label>
+            <input type="text" id="title" name="title" required>
+
+            <label for="description">Description:</label>
+            <textarea id="description" name="description" required></textarea>
+
+            <label for="joinCode">Join Code (5 digits):</label>
+            <input type="text" id="joinCode" name="joinCode" pattern="\d{5}" title="Join code must be exactly 5 digits" required>
+
+            <label for="questions">Questions:</label>
+            <div id="questionsContainer">
+                <div class="question">
+                </div>
+            </div>
+            <button type="button" id="addQuestionBtn">Add Question</button>
+
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
