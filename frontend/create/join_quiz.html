@@ -1,10 +1,135 @@
-<html>
-    <head>
-        <meta charset="UTF-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    </head>
-    <body>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="page-title"></title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../style.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <style>
+        .correct {
+            color: green;
+        }
+        .incorrect {
+            color: red;
+        }
+    </style>
+</head>
+<body onload="loadQuiz()">
+    <div class="header">
+        <h1 id="title"></h1>
+    </div>
+    <form name="quiz" id="quiz">
+        <div class="quiz" id="quiz-container"></div>
+        <button type="button" class="btn btn-primary btn-lg custom-modal" id="button" onclick="submitQuiz()">Submit</button>
+        <div class="modal fade" id="myModal" role="dialog">
+            <div class="modal-dialog modal-sm">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Result</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p id="modal-text"></p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+    <div class="footer">
+        <h4>&copy; Copy Rights: PESCE</h4>
+    </div>
+    <script>
+        function loadQuiz() {
+            const quizData = JSON.parse(localStorage.getItem('quizData'));
+            if (!quizData) {
+                alert('No quiz data found');
+                return;
+            }
+
+            console.log(quizData.title);
+
+            const quizContainer = document.getElementById('quiz-container');
+            quizContainer.innerHTML = ''; // Clear existing content
+
+            document.getElementById('page-title').textContent = `${quizData.title} Quiz`;
+                document.getElementById('title').textContent = quizData.title;
+
+            quizData.questions.forEach((question, index) => {
+                const questionHtml = `
+                    <div class="question" id="${question._id}" data-correct-answer="${question.answer}">
+                        <h5>${index + 1}) ${question.question}</h5>
+                        ${question.options.map((option, optionIndex) => `
+                            <p id="${question._id}-${optionIndex+1}-p">
+                                <input id="${question._id}-${optionIndex + 1}" name="${question._id}" value="${String.fromCharCode(65 + optionIndex)}" type="radio">
+                                <label for="${question._id}-${optionIndex + 1}">${String.fromCharCode(65 + optionIndex)}. ${option}</label>
+                            </p>
+                        `).join('')}
+                    </div>
+                    <hr>`;
+
+                quizContainer.innerHTML += questionHtml;
+            });
+        }
+
+        function submitQuiz() {
+    const quizContainer = document.getElementById('quiz-container');
+    const questions = quizContainer.querySelectorAll('.question');
+    let score = 0;
+    const totalQuestions = questions.length;
+    
+    questions.forEach(question => {
+        const selectedOption = question.querySelector('input[type="radio"]:checked');
+        const correctAnswer = question.getAttribute('data-correct-answer');
         
-    </body>
+        // Reset background colors
+        question.querySelectorAll('p').forEach(p => p.style.backgroundColor = '');
+
+        if (selectedOption) {
+            const userAnswer = selectedOption.value;
+            if (userAnswer === correctAnswer) {
+                score++;
+                const correctOptionIndex = correctAnswer.charCodeAt(0) - "A".charCodeAt(0) + 1;
+                const correctOptionElement = document.getElementById(`${question.id}-${correctOptionIndex}-p`);
+                if (correctOptionElement) {
+                    correctOptionElement.style.backgroundColor = 'lightgreen';
+                }
+            } else {
+                const userOptionIndex = userAnswer.charCodeAt(0) - "A".charCodeAt(0) + 1;
+                const userOptionElement = document.getElementById(`${question.id}-${userOptionIndex}-p`);
+                if (userOptionElement) {
+                    userOptionElement.style.backgroundColor = 'lightcoral';
+                }
+                // Highlight correct answer in green
+                const correctOptionIndex = correctAnswer.charCodeAt(0) - "A".charCodeAt(0) + 1;
+                const correctOptionElement = document.getElementById(`${question.id}-${correctOptionIndex}-p`);
+                if (correctOptionElement) {
+                    correctOptionElement.style.backgroundColor = 'lightgreen';
+                }
+            }
+        } else {
+            question.classList.add('incorrect');
+            // Highlight correct answer in green if no option selected
+            const correctOptionIndex = correctAnswer.charCodeAt(0) - "A".charCodeAt(0) + 1;
+            const correctOptionElement = document.getElementById(`${question.id}-${correctOptionIndex}-p`);
+            if (correctOptionElement) {
+                correctOptionElement.style.backgroundColor = 'lightgreen';
+            }
+        }
+    });
+
+    // Calculate result and show modal
+    const resultText = `Your score is ${score} out of ${totalQuestions}`;
+    document.getElementById('modal-text').textContent = resultText;
+    $('#myModal').modal('show');
+}
+
+    </script>
+</body>
 </html>

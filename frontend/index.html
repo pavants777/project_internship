@@ -188,35 +188,67 @@
 
 
      <!-- Join Quiz -->
-     <section class="page" id="join-quiz" style="text-align: center;">
-      <div class="heading">
-          <h1>Join Quiz</h1>
-          <p class="lead">Attend Live Quiz</p>
-      </div>
-      <div class="create-quiz-subsection">
-        <section class="grid-item">
-          <form id="join-quiz-form">
-              <div class="form-group">
-                  <input type="text" id="quiz-code" name="quiz-code" placeholder="Enter Quiz Code" required>
-              </div>
-              <button class="cta">
-                <span><a href="cppQuiz.html" style="text-decoration: none;">Join Quiz</a></span>
-                <svg width="15px" height="10px" viewBox="0 0 13 10">
-                  <path d="M1,5 L11,5"></path>
-                  <polyline points="8 1 12 5 8 9"></polyline>
-                </svg>
-              </button>
-          </form>
-        </section>
-        <section class="grid-item">
-          <div class="box-container">
-            <h4>Previous Quizs Scores</h4><br>
+         <section class="page" id="join-quiz" style="text-align: center;">
+             <div class="heading">
+                 <h1>Join Quiz</h1>
+                 <p class="lead">Attend Live Quiz</p>
+             </div>
+             <div class="create-quiz-subsection">
+                 <section class="grid-item">
+                     <form id="join-quiz-form">
+                         <div class="form-group">
+                             <input type="text" id="quiz-code" name="quiz-code" placeholder="Enter Quiz Code" required>
+                         </div>
+                         <button type="submit" class="cta">
+                             <span>Join Quiz</span>
+                             <svg width="15px" height="10px" viewBox="0 0 13 10">
+                                 <path d="M1,5 L11,5"></path>
+                                 <polyline points="8 1 12 5 8 9"></polyline>
+                             </svg>
+                         </button>
+                     </form>
+                 </section>
+                 <section class="grid-item">
+                     <div class="box-container">
+                         <h4>Previous Quizzes Scores</h4><br>
+                         <h6>No Record</h6>
+                     </div>
+                 </section>
+             </div>
+         </section>
+     
+         <script>
+         document.getElementById('join-quiz-form').addEventListener('submit', function(event) {
+          event.preventDefault(); // Prevent the form from submitting the traditional way
 
-            <h6>No Record</h6>
-         </div>
-        </section>
-      </div>
-  </section>
+          const quizCode = document.getElementById('quiz-code').value;
+
+          // Fetch request to the join quiz endpoint
+          fetch('http://localhost:3000/joinquiz', {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({ joincode: quizCode })
+          })
+          .then(response => {
+              if (!response.ok) {
+                  throw new Error('Invalid quiz code');
+              }
+              return response.json();
+          })
+          .then(data => {
+            localStorage.setItem('quizData', JSON.stringify(data));
+            window.location.href = 'create/join_quiz.html';
+          })
+          .catch(error => {
+              console.error('Error:', error);
+              alert('Invalid quiz code. Please try again.');
+          });
+      });
+  </script>
+     
+  
   
 
 
@@ -239,5 +271,10 @@
     <div class="fixed-bottom" id="footer">
         <p>&copy;PESCE</p>
     </div>
+
+
+
+  
+      
 </body>
 </html>
